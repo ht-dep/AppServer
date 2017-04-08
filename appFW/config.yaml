@@ -1,0 +1,8 @@
+name: mpdemo
+version: 1
+libraries:
+- name: lxml
+  version: '3.7.3'
+- name: PyCrypto
+  version: '2.6'
+
