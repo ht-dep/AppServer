@@ -183,6 +183,7 @@ class Spider:
 
         return docList
 
+
     def getHistoryListPart2(self):
         res = requests.get(url=self.urlHistory)
         html = res.content.decode("UTF_8")
@@ -206,16 +207,10 @@ class Spider:
             docList.append(cell)
         # print(docList)
         return docList
-    def getPicGirl(self):
+
+    def getGirlMethod1(self, listP):
         picList = []
-        res = requests.get(url=self.urlGirl)
-        html = res.text
-        doc = BeautifulSoup(html)
-
-        listP = doc.select(".main .postlist #pins a")
-
         todayUrl = listP[0].attrs["href"]
-        # print(todayUrl)
         res = requests.get(todayUrl)
         htm = res.text
         # print(htm)
@@ -237,6 +232,43 @@ class Spider:
             picList.append(pic)
 
         return picList
+
+    def getGirlMethod2(self, listP):
+        picList = []
+        todayUrl = listP[0].attrs["href"]
+        res = requests.get(todayUrl)
+        htm = res.text
+        do = BeautifulSoup(htm)
+        # do = pq(htm)
+        span = do.select(".pagenavi span")[-2]
+        # print(span)
+        max_page = int(span.string)
+        # print(max_page)
+        for i in range(1, max_page):
+            url = todayUrl + "/" + str(i)
+            h = requests.get(url).text
+            d = BeautifulSoup(h)
+            obj = d.select(".main-image img")[0]
+            pic = obj.attrs["src"]
+            alt = obj.attrs["alt"]
+            picList.append(pic)
+        return picList
+
+    def getPicGirl(self):
+        picList = []
+        res = requests.get(url=self.urlGirl)
+        html = res.text
+        doc = BeautifulSoup(html)
+        listP = doc.select(".main .postlist #pins a")
+        if listP:
+            result=self.getGirlMethod1(listP)
+        else:
+            listP=doc.select(".main .all ul .url a")
+            result=self.getGirlMethod2(listP)
+        return result
+
+
+        return picList
     def getGirl(self):
         '''
         {
@@ -253,7 +285,7 @@ class Spider:
         doc = BeautifulSoup(html)
 
         listLI = doc.select(".main .postlist #pins li")
-        # print(listP)
+        print(listLI)
         for i in listLI[0:10]:     #控制数量
             per={}
             s = i.select("span[class='time']")[0]
@@ -347,8 +379,8 @@ def savePicGirl():
 if __name__ == "__main__":
     # pass
     # Spider().getHistoryListPart1()
-    Spider().getHistoryListPart2()
-    # Spider().getGirl()
+    # Spider().getHistoryListPart2()
+    Spider().getGirl()
     #fire.Fire(Spider)
     # saveHistory()
     # savePicGirl()
