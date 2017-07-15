@@ -7,3 +7,5 @@
 web框架flask
 
 数据获取爬虫框架：BeautifulSoap、Pyquery
+
+ubuntu17 测试 github
